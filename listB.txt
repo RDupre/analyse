@@ -1,0 +1,10 @@
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00000.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00004.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00008.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00009.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00001.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00005.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00003.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00007.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00002.hipo
+/volatile/clas12/rg-l/production/1passbeam/decoded/021404/clas_021404.evio.00006.hipo
