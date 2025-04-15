@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude -g
-LDFLAGS = -L/home/dupre-l/root/lib -lCore -lRIO -lHist -lTree -lMathCore -pthread
+CXXFLAGS = -std=c++17 -Wall -Wextra -g -Iinclude -I${HIPO}/include -I${ROOTSYS}/include
+LDFLAGS = -L${HIPO}/lib -lhipo4 -L${ROOTSYS}/lib -lCore -lRIO -lHist -lTree -lMathCore -pthread
 
 # Directories
 SRC_DIR = src
