@@ -40,7 +40,10 @@ HistogramManager::~HistogramManager() {
 }
 
 void HistogramManager::fillHistograms(hipo::bank& RECpart, hipo::bank& ALEtrk) {
-    // Fill histograms 
+    // Event counter 
+    if(++evntCnt==100000) 
+        std::cout << "Processing event number " << evntCnt<< std::endl;
+
     int PartNb = RECpart.getRows();
     int TrkNb = ALEtrk.getRows();
 

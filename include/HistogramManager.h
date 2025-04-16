@@ -14,6 +14,7 @@ public:
     void writeHistograms(const std::string& outputFile);
 
 private:
+    int evntCnt=0;
     TH1D* PID;
     TH1D* Pel;
     TH1D* Tel;

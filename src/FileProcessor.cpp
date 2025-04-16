@@ -28,11 +28,6 @@ void FileProcessor::processFile(const std::string& filename) {
     int eventCount = 0;
 
     while (reader.next()) {
-        eventCount++;
-        if (eventCount % 10000 == 0) {
-            std::cout << "Processed " << eventCount << " events." << std::endl;
-        }
-
         reader.read(evt);
         evt.getStructure(RUNconfig);
         evt.getStructure(RECpart);
