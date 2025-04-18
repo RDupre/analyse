@@ -46,23 +46,26 @@ void HistogramManager::fillHistograms(hipo::bank& RECpart, hipo::bank& ALEtrk) {
 
     int PartNb = RECpart.getRows();
     int TrkNb = ALEtrk.getRows();
-
     if (PartNb == 0) return;
 
     for (int i = 0; i < PartNb; ++i) {
         double p = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
                         RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
                         RECpart.getFloat("pz", i) * RECpart.getFloat("pz", i));
-        if (p < 1.9 || p > 2.3) continue;
+
         double theta = acos(RECpart.getFloat("pz", i) / p);
         double phi = atan2(RECpart.getFloat("py", i), RECpart.getFloat("px", i));
         double ppr = sqrt(RECpart.getFloat("px", i)*RECpart.getFloat("px", i) + RECpart.getFloat("py", i)*RECpart.getFloat("py", i) + (2.22-RECpart.getFloat("pz", i))*(2.22-RECpart.getFloat("pz", i)));
-        double q2 = 4.0*2.22*p*pow(sin(theta/2), 2);
-        double nu = 2.22 - p;
-        double Wp = sqrt(0.938*0.938 + 2*0.938*nu - q2);
-        double Wh = sqrt(3.7274*3.7274 + 2*3.7274*nu - q2);
-        if (Wh < 3.7 || Wh > 3.85) continue;
-
+        if(RECpart.getInt("pid", i)==11){
+            double q2 = 4.0*2.22*p*pow(sin(theta/2), 2);
+            double nu = 2.22 - p;
+            double Wp = sqrt(0.938*0.938 + 2*0.938*nu - q2);
+            double Wh = sqrt(3.7274*3.7274 + 2*3.7274*nu - q2);
+            Hq2->Fill(q2);
+            Hnu->Fill(nu);
+            HWp->Fill(Wp);
+            HWh->Fill(Wh);
+	}
         for (int i = 0; i < TrkNb; ++i) {
             double Avz = ALEtrk.getFloat("z", i);
             double Aep = sqrt(ALEtrk.getFloat("px", i)*ALEtrk.getFloat("px", i) + ALEtrk.getFloat("py", i)*ALEtrk.getFloat("py", i) + ALEtrk.getFloat("pz", i)*ALEtrk.getFloat("pz", i));
@@ -84,10 +87,6 @@ void HistogramManager::fillHistograms(hipo::bank& RECpart, hipo::bank& ALEtrk) {
         Pel->Fill(p);
         Tel->Fill(theta);
         Hel->Fill(phi);
-        Hq2->Fill(q2);
-        Hnu->Fill(nu);
-        HWp->Fill(Wp);
-        HWh->Fill(Wh);
         Ppc->Fill(ppr);
     }
 }
