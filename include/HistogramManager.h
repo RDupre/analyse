@@ -13,10 +13,11 @@ public:
     ~HistogramManager();
     void fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk);
     void writeHistograms(const std::string& outputFile);
-    void handleSignal(int signalValue); // New method to handle signal values
+    void handleRunNumber(int RunNumber); // Updated method to handle RunNumber
 
 private:
-    int evntCnt=0;
+    int RN=0;
+    int evntCnt = 0;
     TH1D* PID;
     TH1D* Pel;
     TH1D* Tel;
@@ -33,7 +34,6 @@ private:
     TH1D* DelP;
     TH1D* Ppc;
     TH1D* Ecl;
-    TH1F* signalHistogram; // Example histogram for signal values
 };
 
 #endif // HISTOGRAMMANAGER_H

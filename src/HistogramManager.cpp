@@ -1,8 +1,10 @@
 #include "HistogramManager.h"
 #include <cmath>
+#include <iostream>
 
 HistogramManager::HistogramManager() {
-    PID = new TH1D("PID", "PID", 100, 0, 100);
+    // Initialize histograms
+    PID = new TH1D("PID", "Particle ID", 100, -50, 50);
     Pel = new TH1D("Pel", "Pel", 100, 0, 2.5);
     Tel = new TH1D("Tel", "Tel", 100, 0, 0.5);
     Hel = new TH1D("Hel", "Hel", 100, -3.14, 3.14);
@@ -21,6 +23,7 @@ HistogramManager::HistogramManager() {
 }
 
 HistogramManager::~HistogramManager() {
+    // Clean up histograms
     delete PID;
     delete Pel;
     delete Tel;
@@ -39,7 +42,7 @@ HistogramManager::~HistogramManager() {
     delete Ecl;
 }
 
-void HistogramManager::fillHistograms(hipo::bank& RECpart, hipo::bank& ALEtrk) {
+void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk) {
     // Event counter 
     if(++evntCnt==100000) 
         std::cout << "Processing event number " << evntCnt<< std::endl;
@@ -92,7 +95,7 @@ void HistogramManager::fillHistograms(hipo::bank& RECpart, hipo::bank& ALEtrk) {
 }
 
 void HistogramManager::writeHistograms(const std::string& outputFile) {
-    TFile* f = new TFile(outputFile.c_str(), "RECREATE");
+    TFile file(outputFile.c_str(), "RECREATE");
     PID->Write();
     Pel->Write();
     Tel->Write();
@@ -109,5 +112,39 @@ void HistogramManager::writeHistograms(const std::string& outputFile) {
     DelP->Write();
     Ppc->Write();
     Ecl->Write();
-    f->Close();
+    file.Close();
+}
+
+void HistogramManager::ResetHistograms() {
+    PID->Reset();
+    Pel->Reset();
+    Tel->Reset();
+    Hel->Reset();
+    Hq2->Reset();
+    Hnu->Reset();
+    HWp->Reset();
+    HWh->Reset();
+    Hvz->Reset();
+    Hep->Reset();
+    Hth->Reset();
+    Hph->Reset();
+    CPhi->Reset();
+    DelP->Reset();
+    Ppc->Reset();
+    Ecl->Reset();
+}
+
+void HistogramManager::handleRunNumber(int RunNumber) {
+    std::cout << "Handling RunNumber: " << RunNumber << std::endl;
+    // Example: Fill a histogram or perform other operations with RunNumber
+    if(RN!=0) {
+        std::cout << "Finished with this run: " << RN << std::endl;
+        std::cout << "Writing histograms to file..." << std::endl;
+        writeHistograms("output/output_" + std::to_string(RN) + ".root");
+    } 
+
+    RN = RunNumber;
+    std::cout << "RunNumber set to: " << RN << std::endl;
+    // Reset histograms or perform other operations as needed
+    ResetHistograms();
 }
