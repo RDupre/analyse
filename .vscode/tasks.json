@@ -1,0 +1,79 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "src/*.cpp",
+                "-o",
+                "main",
+                "-Iinclude",
+                "-std=c++17",
+                "-pthread",
+                "-m64",
+                "-Wall",
+                "-Wextra",
+                "-I/home/dupre-l/root/include",
+                "-I/home/dupre-l/HipoTools/include",
+                "-L/home/dupre-l/root/lib",
+                "-lEve",
+                "-lEG",
+                "-lGeom",
+                "-lGed",
+                "-lRGL",
+                "-lGui",
+                "-lCore",
+                "-lImt",
+                "-lRIO",
+                "-lNet",
+                "-lHist",
+                "-lGraf",
+                "-lGraf3d",
+                "-lGpad",
+                "-lROOTVecOps",
+                "-lTree",
+                "-lTreePlayer",
+                "-lRint",
+                "-lPostscript",
+                "-lMatrix",
+                "-lPhysics",
+                "-lMathCore",
+                "-lThread",
+                "-lMultiProc",
+                "-lROOTDataFrame",
+                "-Wl,-rpath,/home/dupre-l/root/lib",
+                "-pthread",
+                "-lm",
+                "-ldl",
+                "-rdynamic",
+                "-L/home/dupre-l/HipoTools/lib",
+                "-lhipocpp4"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": "./main",
+            "args": [
+                "${workspaceFolder}/listA.txt"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

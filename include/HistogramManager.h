@@ -5,13 +5,15 @@
 #include "TH2.h"
 #include "TFile.h"
 #include "hipo4/bank.h"
+#include <string>
 
 class HistogramManager {
 public:
     HistogramManager();
     ~HistogramManager();
-    void fillHistograms(hipo::bank& RECpart, hipo::bank& ALEtrk);
+    void fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk);
     void writeHistograms(const std::string& outputFile);
+    void handleSignal(int signalValue); // New method to handle signal values
 
 private:
     int evntCnt=0;
@@ -31,6 +33,7 @@ private:
     TH1D* DelP;
     TH1D* Ppc;
     TH1D* Ecl;
+    TH1F* signalHistogram; // Example histogram for signal values
 };
 
 #endif // HISTOGRAMMANAGER_H

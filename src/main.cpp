@@ -14,6 +14,7 @@
 #include "hipo4/dictionary.h"
 #include "FileProcessor.h"
 #include "HistogramManager.h"
+#include "FileListReader.h"
 
 int main(int argc, char* argv[]) {
     std::ostringstream command;
@@ -30,28 +31,14 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Read the list of files from the provided file
-    std::string fileListPath = argv[1];
-    std::ifstream fileList(fileListPath);
-    if (!fileList.is_open()) {
-        std::cerr << "Error: Could not open file list " << fileListPath << std::endl;
+    // Use FileListReader to handle the input file
+    FileListReader fileListReader(argv[1]);
+    if (!fileListReader.isValid()) {
         return 1;
     }
 
-    std::vector<std::string> filenames;
-    std::string line;
-    while (std::getline(fileList, line)) {
-        if (!line.empty()) {
-            filenames.push_back(line);
-        }
-    }
-    fileList.close();
-
-    if (filenames.empty()) {
-        std::cerr << "Error: No files found in the list." << std::endl;
-        return 1;
-    }
-
+    const auto& filenames = fileListReader.getFilenames();
+    
     std::cout << "Start processing files..." << std::endl;
 
     // Initialize HistogramManager and FileProcessor
