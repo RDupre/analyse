@@ -48,9 +48,6 @@ int main(int argc, char* argv[]) {
     // Process files
     fileProcessor.processFiles();
 
-    // Write histograms
-    histManager.writeHistograms("output/output.root");
-
     std::cout << "Processing complete." << std::endl;
     return 0;
 }

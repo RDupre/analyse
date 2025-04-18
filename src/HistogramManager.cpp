@@ -25,6 +25,10 @@ HistogramManager::HistogramManager() {
 }
 
 HistogramManager::~HistogramManager() {
+    // Write last histograms
+    std::cout << "Finished with this run: " << RN << std::endl;
+    std::cout << "Writing histograms to file..." << std::endl;
+    writeHistograms("output/output_" + std::to_string(RN) + ".root");
     // Clean up histograms
     delete PID;
     delete Pel;
