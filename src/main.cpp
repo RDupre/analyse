@@ -38,12 +38,12 @@ int main(int argc, char* argv[]) {
     }
 
     const auto& filenames = fileListReader.getFilenames();
-    
+
     std::cout << "Start processing files..." << std::endl;
 
     // Initialize HistogramManager and FileProcessor
-    HistogramManager histManager;
-    FileProcessor fileProcessor(filenames, histManager);
+    DataAnalyzer dataAnalyzer;
+    FileProcessor fileProcessor(filenames, dataAnalyzer);
 
     // Process files
     fileProcessor.processFiles();

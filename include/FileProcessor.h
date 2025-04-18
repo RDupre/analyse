@@ -3,17 +3,17 @@
 
 #include <vector>
 #include <string>
-#include "HistogramManager.h"
+#include "DataAnalyzer.h"
 #include "hipo4/reader.h"
 
 class FileProcessor {
 public:
-    FileProcessor(const std::vector<std::string>& filenames, HistogramManager& histManager);
+    FileProcessor(const std::vector<std::string>& filenames, DataAnalyzer& dataAnalyzer);
     void processFiles();
 
 private:
     std::vector<std::string> filenames;
-    HistogramManager& histManager;
+    DataAnalyzer& dataAnalyzer;
 
     void processFile(const std::string& filename);
     bool isValidHipoFile(const std::string& filename) const;

@@ -25,10 +25,6 @@ HistogramManager::HistogramManager() {
 }
 
 HistogramManager::~HistogramManager() {
-    // Write last histograms
-    std::cout << "Finished with this run: " << RN << std::endl;
-    std::cout << "Writing histograms to file..." << std::endl;
-    writeHistograms("output/output_" + std::to_string(RN) + ".root");
     // Clean up histograms
     delete PID;
     delete Pel;
@@ -50,64 +46,24 @@ HistogramManager::~HistogramManager() {
     delete PmPc;
 }
 
-void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk, const hipo::bank& ALEadc, const hipo::bank& ALEhit) {
-    // Event counter 
-    if(++evntCnt==100000) 
-        std::cout << "Processing event number " << evntCnt<< std::endl;
-
-    int PartNb = RECpart.getRows();
-    int TrkNb = ALEtrk.getRows();
-    if (PartNb == 0) return;
-
-    for (int i = 0; i < PartNb; ++i) {
-        if(RECpart.getInt("pid", i)!=22) continue;
-        double p = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
-                        RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
-                        RECpart.getFloat("pz", i) * RECpart.getFloat("pz", i));
-	if(p<1.5) continue;
-        double theta = acos(RECpart.getFloat("pz", i) / p);
-        double phi = atan2(RECpart.getFloat("py", i), RECpart.getFloat("px", i));
-        double ppr = sqrt(RECpart.getFloat("px", i)*RECpart.getFloat("px", i) 
-                        + RECpart.getFloat("py", i)*RECpart.getFloat("py", i) 
-			+ (2.22-RECpart.getFloat("pz", i))*(2.22-RECpart.getFloat("pz", i)));
-        double q2 = 4.0*2.22*p*pow(sin(theta/2), 2);
-        double nu = 2.22 - p;
-        double Wp = sqrt(0.938*0.938 + 2*0.938*nu - q2);
-        double Wh = sqrt(1.875*1.875 + 2*1.875*nu - q2);
-        Hq2->Fill(q2);
-        Hnu->Fill(nu);
-        HWp->Fill(Wp);
-        HWh->Fill(Wh);
-	if (Wp>1.5 || Wp<.86) continue;
-        for (int i = 0; i < TrkNb; ++i) {
-            double Avz = ALEtrk.getFloat("z", i);
-            double Aep = sqrt(ALEtrk.getFloat("px", i)*ALEtrk.getFloat("px", i) + ALEtrk.getFloat("py", i)*ALEtrk.getFloat("py", i) + ALEtrk.getFloat("pz", i)*ALEtrk.getFloat("pz", i));
-            double Ath = acos(ALEtrk.getFloat("pz", i)/p);
-            double Aph = atan2(ALEtrk.getFloat("py", i), ALEtrk.getFloat("px", i));
-
-            Hvz->Fill(Avz);
-            Hep->Fill(Aep);
-            Hth->Fill(Ath);
-            Hph->Fill(Aph);
-            Aph = Aph - 3.14/2; 
-            if (Aph > 3.14) Aph = Aph - 2*3.14;
-            if (Aph < -3.14) Aph = Aph + 2*3.14;
-	    double Dph = Aph - phi;
-            if (Dph > 3.14) Dph = Dph - 2*3.14;
-            if (Dph < -3.14) Dph = Dph + 2*3.14;
-
-            CPhi->Fill(Aph, phi);
-            DelP->Fill(Dph);
-
-            DPPc->Fill(Dph,ppr);
-            if (Dph>1.5&&Dph<2.1) PmPc->Fill(Aep,ppr);
-        }
-
-        PID->Fill(RECpart.getInt("pid", i));
-        Pel->Fill(p);
-        Tel->Fill(theta);
-        Hel->Fill(phi);
-        Ppc->Fill(ppr);
+void HistogramManager::fillHistograms(double p, double theta, double phi, double q2, double nu, double Wp, double Wh,
+                                      double vz, double ep, double th, double ph, double dphi, double ppr) {
+    Hq2->Fill(q2);
+    Hnu->Fill(nu);
+    HWp->Fill(Wp);
+    HWh->Fill(Wh);
+    Hvz->Fill(vz);
+    Hep->Fill(ep);
+    Hth->Fill(th);
+    Hph->Fill(ph);
+    DelP->Fill(dphi);
+    Ppc->Fill(ppr);
+    Pel->Fill(p);
+    Tel->Fill(theta);
+    Hel->Fill(phi);
+    DPPc->Fill(dphi, ppr);
+    if (dphi > 1.5 && dphi < 2.1) {
+        PmPc->Fill(ep, ppr);
     }
 }
 
@@ -155,17 +111,3 @@ void HistogramManager::resetHistograms() {
     PmPc->Reset();
 }
 
-void HistogramManager::handleRunNumber(int RunNumber) {
-    std::cout << "Handling RunNumber: " << RunNumber << std::endl;
-    // Example: Fill a histogram or perform other operations with RunNumber
-    if(RN!=0) {
-        std::cout << "Finished with this run: " << RN << std::endl;
-        std::cout << "Writing histograms to file..." << std::endl;
-        writeHistograms("output/output_" + std::to_string(RN) + ".root");
-    } 
-
-    RN = RunNumber;
-    std::cout << "RunNumber set to: " << RN << std::endl;
-    // Reset histograms or perform other operations as needed
-    resetHistograms();
-}

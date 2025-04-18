@@ -4,21 +4,19 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TFile.h"
-#include "hipo4/bank.h"
 #include <string>
 
 class HistogramManager {
 public:
     HistogramManager();
     ~HistogramManager();
-    void fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk, const hipo::bank& ALEadc, const hipo::bank& ALEhit);
+
+    void fillHistograms(double p, double theta, double phi, double q2, double nu, double Wp, double Wh,
+                        double vz, double ep, double th, double ph, double dphi, double ppr);
     void writeHistograms(const std::string& outputFile);
     void resetHistograms();
-    void handleRunNumber(int RunNumber); // Updated method to handle RunNumber
 
 private:
-    int RN=0;
-    int evntCnt = 0;
     TH1D* PID;
     TH1D* Pel;
     TH1D* Tel;

@@ -1,10 +1,11 @@
 #include "FileProcessor.h"
+#include "DataAnalyzer.h" // Updated include
 #include <iostream>
 #include <cmath>
 #include <regex>
 
-FileProcessor::FileProcessor(const std::vector<std::string>& filenames, HistogramManager& histManager)
-    : filenames(filenames), histManager(histManager) {}
+FileProcessor::FileProcessor(const std::vector<std::string>& filenames, DataAnalyzer& dataAnalyzer)
+    : filenames(filenames), dataAnalyzer(dataAnalyzer) {}
 
 void FileProcessor::processFiles() {
     for (const auto& filename : filenames) {
@@ -15,7 +16,7 @@ void FileProcessor::processFiles() {
             if (std::regex_search(filename, match, digitRegex)) {
                 int RunNumber = std::stoi(match.str());
                 std::cout << "Detected signal file: " << filename << " with RunNumber: " << RunNumber << std::endl;
-                histManager.handleRunNumber(RunNumber);
+                dataAnalyzer.handleRunNumber(RunNumber);
             } else {
                 std::cerr << "Skipping invalid file: " << filename << " (not a .hipo file and no valid RunNumber)" << std::endl;
             }
@@ -39,7 +40,6 @@ void FileProcessor::processFile(const std::string& filename) {
     hipo::bank ALEhit = factory.getSchema("AHDC::hits");
 
     hipo::event evt;
-    int eventCount = 0;
 
     while (reader.next()) {
         reader.read(evt);
@@ -48,7 +48,7 @@ void FileProcessor::processFile(const std::string& filename) {
         evt.getStructure(ALEadc );
         evt.getStructure(ALEhit );
 
-        histManager.fillHistograms(RECpart, ALEtrk, ALEadc, ALEhit);
+        dataAnalyzer.fillHistograms(RECpart, ALEtrk, ALEadc, ALEhit);
     }
 }
 
