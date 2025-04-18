@@ -13,6 +13,7 @@ public:
     ~HistogramManager();
     void fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk);
     void writeHistograms(const std::string& outputFile);
+    void resetHistograms();
     void handleRunNumber(int RunNumber); // Updated method to handle RunNumber
 
 private:
@@ -34,6 +35,8 @@ private:
     TH1D* DelP;
     TH1D* Ppc;
     TH1D* Ecl;
+    TH2D* DPPc;
+    TH2D* PmPc;
 };
 
 #endif // HISTOGRAMMANAGER_H

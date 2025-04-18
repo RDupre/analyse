@@ -11,15 +11,17 @@ HistogramManager::HistogramManager() {
     Hq2 = new TH1D("q2", "q2", 100, 0, 1.0);
     Hnu = new TH1D("nu", "nu", 100, 0, 2.3);
     HWp = new TH1D("Wp", "Wp", 100, 0.7, 1.5);
-    HWh = new TH1D("Wh", "Wh", 100, 3.5, 4.5);
+    HWh = new TH1D("Wh", "Wh", 100, 1.4, 2.5);
     Hvz = new TH1D("Hvz", "Hvz", 100, -25, 25);
     Hep = new TH1D("Hep", "Hep", 100, 0, 1000);
     Hth = new TH1D("Hth", "Hth", 100, 0, 3.14);
     Hph = new TH1D("Hph", "Hph", 100, -3.14, 3.14);
-    CPhi = new TH2D("DPhi", "DPhi", 100, -3.14, 3.14, 100, -3.14, 3.14);
-    DelP = new TH1D("Delta Phi", "Delta Phi", 50, -5, 5);
-    Ppc = new TH1D("Ppc", "Ppc", 100, 0, 0.5);
+    CPhi = new TH2D("DPhi", "DPhi", 60, -3.14, 3.14, 60, -3.14, 3.14);
+    DelP = new TH1D("Delta Phi", "Delta Phi", 60, -3.14, 3.14);
+    Ppc = new TH1D("Ppc", "Ppc", 100, 0, 0.8);
     Ecl = new TH1D("Ecl", "Ecl", 100, 0, 2.5);
+    DPPc = new TH2D("DPhi vs Calc P", "DPhi2", 60, -3.14, 3.14, 60, 0, 0.8);
+    PmPc = new TH2D("P meas vs calc", "PmPc", 60, 0, 600, 60, 0, 0.8);
 }
 
 HistogramManager::~HistogramManager() {
@@ -40,6 +42,8 @@ HistogramManager::~HistogramManager() {
     delete DelP;
     delete Ppc;
     delete Ecl;
+    delete DPPc;
+    delete PmPc;
 }
 
 void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk) {
@@ -52,23 +56,25 @@ void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::ban
     if (PartNb == 0) return;
 
     for (int i = 0; i < PartNb; ++i) {
+        if(RECpart.getInt("pid", i)!=22) continue;
         double p = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
                         RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
                         RECpart.getFloat("pz", i) * RECpart.getFloat("pz", i));
-
+	if(p<1.5) continue;
         double theta = acos(RECpart.getFloat("pz", i) / p);
         double phi = atan2(RECpart.getFloat("py", i), RECpart.getFloat("px", i));
-        double ppr = sqrt(RECpart.getFloat("px", i)*RECpart.getFloat("px", i) + RECpart.getFloat("py", i)*RECpart.getFloat("py", i) + (2.22-RECpart.getFloat("pz", i))*(2.22-RECpart.getFloat("pz", i)));
-        if(RECpart.getInt("pid", i)==11){
-            double q2 = 4.0*2.22*p*pow(sin(theta/2), 2);
-            double nu = 2.22 - p;
-            double Wp = sqrt(0.938*0.938 + 2*0.938*nu - q2);
-            double Wh = sqrt(3.7274*3.7274 + 2*3.7274*nu - q2);
-            Hq2->Fill(q2);
-            Hnu->Fill(nu);
-            HWp->Fill(Wp);
-            HWh->Fill(Wh);
-	}
+        double ppr = sqrt(RECpart.getFloat("px", i)*RECpart.getFloat("px", i) 
+                        + RECpart.getFloat("py", i)*RECpart.getFloat("py", i) 
+			+ (2.22-RECpart.getFloat("pz", i))*(2.22-RECpart.getFloat("pz", i)));
+        double q2 = 4.0*2.22*p*pow(sin(theta/2), 2);
+        double nu = 2.22 - p;
+        double Wp = sqrt(0.938*0.938 + 2*0.938*nu - q2);
+        double Wh = sqrt(1.875*1.875 + 2*1.875*nu - q2);
+        Hq2->Fill(q2);
+        Hnu->Fill(nu);
+        HWp->Fill(Wp);
+        HWh->Fill(Wh);
+	if (Wp>1.5 || Wp<.86) continue;
         for (int i = 0; i < TrkNb; ++i) {
             double Avz = ALEtrk.getFloat("z", i);
             double Aep = sqrt(ALEtrk.getFloat("px", i)*ALEtrk.getFloat("px", i) + ALEtrk.getFloat("py", i)*ALEtrk.getFloat("py", i) + ALEtrk.getFloat("pz", i)*ALEtrk.getFloat("pz", i));
@@ -82,8 +88,15 @@ void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::ban
             Aph = Aph - 3.14/2; 
             if (Aph > 3.14) Aph = Aph - 2*3.14;
             if (Aph < -3.14) Aph = Aph + 2*3.14;
+	    double Dph = Aph - phi;
+            if (Dph > 3.14) Dph = Dph - 2*3.14;
+            if (Dph < -3.14) Dph = Dph + 2*3.14;
+
             CPhi->Fill(Aph, phi);
-            DelP->Fill(Aph - phi);
+            DelP->Fill(Dph);
+
+            DPPc->Fill(Dph,ppr);
+            if (Dph>1.5&&Dph<2.1) PmPc->Fill(Aep,ppr);
         }
 
         PID->Fill(RECpart.getInt("pid", i));
@@ -112,10 +125,12 @@ void HistogramManager::writeHistograms(const std::string& outputFile) {
     DelP->Write();
     Ppc->Write();
     Ecl->Write();
+    DPPc->Write();
+    PmPc->Write();
     file.Close();
 }
 
-void HistogramManager::ResetHistograms() {
+void HistogramManager::resetHistograms() {
     PID->Reset();
     Pel->Reset();
     Tel->Reset();
@@ -132,6 +147,8 @@ void HistogramManager::ResetHistograms() {
     DelP->Reset();
     Ppc->Reset();
     Ecl->Reset();
+    DPPc->Reset();
+    PmPc->Reset();
 }
 
 void HistogramManager::handleRunNumber(int RunNumber) {
@@ -146,5 +163,5 @@ void HistogramManager::handleRunNumber(int RunNumber) {
     RN = RunNumber;
     std::cout << "RunNumber set to: " << RN << std::endl;
     // Reset histograms or perform other operations as needed
-    ResetHistograms();
+    resetHistograms();
 }

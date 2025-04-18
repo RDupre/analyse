@@ -36,7 +36,7 @@ void FileProcessor::processFile(const std::string& filename) {
     hipo::bank RUNconfig = factory.getSchema("RUN::config");
     hipo::bank RECevt = factory.getSchema("REC::Event");
     hipo::bank RECpart = factory.getSchema("REC::Particle");
-    hipo::bank ALEtrk = factory.getSchema("AHDC::Track");
+    hipo::bank ALEtrk = factory.getSchema("AHDC::track");
 
     hipo::event evt;
     int eventCount = 0;
