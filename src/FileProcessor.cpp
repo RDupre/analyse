@@ -33,22 +33,22 @@ void FileProcessor::processFile(const std::string& filename) {
     hipo::dictionary factory;
     reader.readDictionary(factory);
 
-    hipo::bank RUNconfig = factory.getSchema("RUN::config");
-    hipo::bank RECevt = factory.getSchema("REC::Event");
     hipo::bank RECpart = factory.getSchema("REC::Particle");
     hipo::bank ALEtrk = factory.getSchema("AHDC::track");
+    hipo::bank ALEadc = factory.getSchema("AHDC::adc");
+    hipo::bank ALEhit = factory.getSchema("AHDC::hits");
 
     hipo::event evt;
     int eventCount = 0;
 
     while (reader.next()) {
         reader.read(evt);
-        evt.getStructure(RUNconfig);
         evt.getStructure(RECpart);
-        evt.getStructure(RECevt);
-        evt.getStructure(ALEtrk);
+        evt.getStructure(ALEtrk );
+        evt.getStructure(ALEadc );
+        evt.getStructure(ALEhit );
 
-        histManager.fillHistograms(RECpart, ALEtrk);
+        histManager.fillHistograms(RECpart, ALEtrk, ALEadc, ALEhit);
     }
 }
 

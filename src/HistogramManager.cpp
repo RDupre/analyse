@@ -50,7 +50,7 @@ HistogramManager::~HistogramManager() {
     delete PmPc;
 }
 
-void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk) {
+void HistogramManager::fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk, const hipo::bank& ALEadc, const hipo::bank& ALEhit) {
     // Event counter 
     if(++evntCnt==100000) 
         std::cout << "Processing event number " << evntCnt<< std::endl;

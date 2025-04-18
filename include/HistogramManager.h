@@ -11,7 +11,7 @@ class HistogramManager {
 public:
     HistogramManager();
     ~HistogramManager();
-    void fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk);
+    void fillHistograms(const hipo::bank& RECpart, const hipo::bank& ALEtrk, const hipo::bank& ALEadc, const hipo::bank& ALEhit);
     void writeHistograms(const std::string& outputFile);
     void resetHistograms();
     void handleRunNumber(int RunNumber); // Updated method to handle RunNumber
