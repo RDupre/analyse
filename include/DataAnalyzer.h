@@ -6,11 +6,17 @@
 
 class DataAnalyzer {
 public:
-    explicit DataAnalyzer(HistogramManager& histManager);
-    void analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk);
+    DataAnalyzer(HistogramManager& histManager);
+    ~DataAnalyzer();
+    void analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::bank& ALEadc, hipo::bank& ALEhit);
+    void writeHistograms(const std::string& outputFile);
+    void resetHistograms();
+    void handleRunNumber(int RunNumber);
 
 private:
+    int RN = 0;
     HistogramManager& histManager;
 };
 
-#endif // DATAANALYZER_H
+#endif // DATAANALYZER_H#include "DataAnalyzer.h"
+

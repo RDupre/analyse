@@ -10,7 +10,7 @@ DataAnalyzer::~DataAnalyzer() {
     writeHistograms("output/output_" + std::to_string(RN) + ".root");
 }
 
-void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk) {
+void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::bank& ALEadc, hipo::bank& ALEhit) {
     int PartNb = RECpart.getRows();
     int TrkNb = ALEtrk.getRows();
     if (PartNb == 0) return;

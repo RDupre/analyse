@@ -42,7 +42,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Start processing files..." << std::endl;
 
     // Initialize HistogramManager and FileProcessor
-    DataAnalyzer dataAnalyzer;
+    HistogramManager histManager;
+    DataAnalyzer dataAnalyzer(histManager);
     FileProcessor fileProcessor(filenames, dataAnalyzer);
 
     // Process files

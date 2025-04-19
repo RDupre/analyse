@@ -48,7 +48,7 @@ void FileProcessor::processFile(const std::string& filename) {
         evt.getStructure(ALEadc );
         evt.getStructure(ALEhit );
 
-        dataAnalyzer.fillHistograms(RECpart, ALEtrk, ALEadc, ALEhit);
+        dataAnalyzer.analyzeEvent(RECpart, ALEtrk, ALEadc, ALEhit);
     }
 }
 
