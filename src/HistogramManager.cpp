@@ -47,7 +47,7 @@ HistogramManager::~HistogramManager() {
 }
 
 void HistogramManager::fillHistograms(double p, double theta, double phi, double q2, double nu, double Wp, double Wh,
-                                      double vz, double ep, double th, double ph, double dphi, double ppr) {
+                                      double vz, double ep, double th, double ph, double dphi, double ppr, double edep) {
     Hq2->Fill(q2);
     Hnu->Fill(nu);
     HWp->Fill(Wp);
@@ -56,12 +56,15 @@ void HistogramManager::fillHistograms(double p, double theta, double phi, double
     Hep->Fill(ep);
     Hth->Fill(th);
     Hph->Fill(ph);
+    CPhi->Fill(phi, ph);
     DelP->Fill(dphi);
     Ppc->Fill(ppr);
     Pel->Fill(p);
     Tel->Fill(theta);
     Hel->Fill(phi);
+    Ecl->Fill(edep);
     DPPc->Fill(dphi, ppr);
+    PmPc->Fill(ep, ppr);
     if (dphi > 1.5 && dphi < 2.1) {
         PmPc->Fill(ep, ppr);
     }

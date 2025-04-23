@@ -12,7 +12,7 @@ public:
     ~HistogramManager();
 
     void fillHistograms(double p, double theta, double phi, double q2, double nu, double Wp, double Wh,
-                        double vz, double ep, double th, double ph, double dphi, double ppr);
+                        double vz, double ep, double th, double ph, double dphi, double ppr, double edep);
     void writeHistograms(const std::string& outputFile);
     void resetHistograms();
 

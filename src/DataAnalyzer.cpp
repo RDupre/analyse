@@ -37,9 +37,11 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             double ph = atan2(ALEtrk.getFloat("py", j), ALEtrk.getFloat("px", j));
             double dphi = ph - phi;
             double ppr = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
-                              RECpart.getFloat("py", i) * RECpart.getFloat("py", i));
+                              RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
+                              (2.22 - RECpart.getFloat("pz", i)) * (2.22 - RECpart.getFloat("pz", i)));
+            double edep = ALEtrk.getFloat("sum_adc", j);
 
-            histManager.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr);
+            histManager.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep);
         }
     }
 }
