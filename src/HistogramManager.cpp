@@ -17,11 +17,11 @@ HistogramManager::HistogramManager() {
     Hth = new TH1D("Hth", "Hth", 100, 0, 3.14);
     Hph = new TH1D("Hph", "Hph", 100, -3.14, 3.14);
     CPhi = new TH2D("DPhi", "DPhi", 60, -3.14, 3.14, 60, -3.14, 3.14);
-    DelP = new TH1D("Delta Phi", "Delta Phi", 60, -3.14, 3.14);
+    DelP = new TH1D("DelP", "Delta Phi", 60, -3.14, 3.14);
     Ppc = new TH1D("Ppc", "Ppc", 100, 0, 0.8);
     Ecl = new TH1D("Ecl", "Ecl", 100, 0, 2.5);
-    DPPc = new TH2D("DPhi vs Calc P", "DPhi2", 60, -3.14, 3.14, 60, 0, 0.8);
-    PmPc = new TH2D("P meas vs calc", "PmPc", 60, 0, 600, 60, 0, 0.8);
+    DPPc = new TH2D("DPhi2", "DPhi vs Calc P", 60, -3.14, 3.14, 60, 0, 0.8);
+    PmPc = new TH2D("PmPc", "P meas vs calc", 60, 0, 600, 60, 0, 0.8);
 }
 
 HistogramManager::~HistogramManager() {

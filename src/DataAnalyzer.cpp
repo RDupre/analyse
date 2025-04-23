@@ -40,6 +40,7 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
                               RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
                               (2.22 - RECpart.getFloat("pz", i)) * (2.22 - RECpart.getFloat("pz", i)));
             double edep = ALEtrk.getFloat("sum_adc", j);
+            std::cout << "Energy deposition: " << edep << std::endl;
 
             histManager.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep);
         }
