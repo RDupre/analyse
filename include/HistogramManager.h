@@ -8,7 +8,7 @@
 
 class HistogramManager {
 public:
-    HistogramManager();
+    HistogramManager(const std::string& ID);
     ~HistogramManager();
 
     void fillHistograms(double p, double theta, double phi, double q2, double nu, double Wp, double Wh,

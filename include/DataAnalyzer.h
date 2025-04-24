@@ -15,9 +15,9 @@ public:
 
 private:
     int RN = 0;
-    HistogramManager& histManager0; // First histogram manager
-    HistogramManager& histManager1; // First histogram manager
-    HistogramManager& histManager2; // Second histogram manager
+    HistogramManager histManager0;
+    HistogramManager histManager1;
+    HistogramManager histManager2;
 };
 
 #endif // DATAANALYZER_H

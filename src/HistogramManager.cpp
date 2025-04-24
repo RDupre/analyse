@@ -2,26 +2,26 @@
 #include <cmath>
 #include <iostream>
 
-HistogramManager::HistogramManager() {
+HistogramManager::HistogramManager(const std::string& ID) {
     // Initialize histograms
-    PID = new TH1D("PID", "Particle ID", 100, -50, 50);
-    Pel = new TH1D("Pel", "Pel", 100, 0, 2.5);
-    Tel = new TH1D("Tel", "Tel", 100, 0, 0.5);
-    Hel = new TH1D("Hel", "Hel", 100, -3.14, 3.14);
-    Hq2 = new TH1D("q2", "q2", 100, 0, 0.1);
-    Hnu = new TH1D("nu", "nu", 100, 0, 2.3);
-    HWp = new TH1D("Wp", "Wp", 100, 0.7, 1.5);
-    HWh = new TH1D("Wh", "Wh", 100, 1.4, 2.5);
-    Hvz = new TH1D("Hvz", "Hvz", 100, -50, 50);
-    Hep = new TH1D("Hep", "Hep", 100, 0, 1000);
-    Hth = new TH1D("Hth", "Hth", 100, 0, 3.14);
-    Hph = new TH1D("Hph", "Hph", 100, -3.14, 3.14);
-    CPhi = new TH2D("DPhi", "DPhi", 60, -3.14, 3.14, 60, -3.14, 3.14);
-    DelP = new TH1D("DelP", "Delta Phi", 60, -3.14, 3.14);
-    Ppc = new TH1D("Ppc", "Ppc", 100, 0, 0.8);
-    Ecl = new TH1D("Ecl", "Ecl", 100, 0, 50000);
-    DPPc = new TH2D("DPhi2", "DPhi vs Calc P", 60, -3.14, 3.14, 60, 0, 0.8);
-    PmPc = new TH2D("PmPc", "P calc vs Edep", 40, 0, 0.8, 50, 0, 50000);
+    PID  = new TH1D("PID_"+ID, "Particle ID", 100, -50, 50);
+    Pel  = new TH1D("Pel_"+ID, "Pel", 100, 0, 2.5);
+    Tel  = new TH1D("Tel_"+ID, "Tel", 100, 0, 0.5);
+    Hel  = new TH1D("Hel_"+ID, "Hel", 100, -3.14, 3.14);
+    Hq2  = new TH1D("q2__"+ID, "q2", 100, 0, 0.1);
+    Hnu  = new TH1D("nu__"+ID, "nu", 100, 0, 2.3);
+    HWp  = new TH1D("Wp__"+ID, "Wp", 100, 0.7, 1.5);
+    HWh  = new TH1D("Wh__"+ID, "Wh", 100, 1.4, 2.5);
+    Hvz  = new TH1D("Hvz_"+ID, "Hvz", 100, -50, 50);
+    Hep  = new TH1D("Hep_"+ID, "Hep", 100, 0, 1000);
+    Hth  = new TH1D("Hth_"+ID, "Hth", 100, 0, 3.14);
+    Hph  = new TH1D("Hph_"+ID, "Hph", 100, -3.14, 3.14);
+    CPhi = new TH2D("DPhi"+ID, "DPhi", 60, -3.14, 3.14, 60, -3.14, 3.14);
+    DelP = new TH1D("DelP"+ID, "Delta Phi", 60, -3.14, 3.14);
+    Ppc  = new TH1D("Ppc_"+ID, "Ppc", 100, 0, 0.8);
+    Ecl  = new TH1D("Ecl_"+ID, "Ecl", 100, 0, 50000);
+    DPPc = new TH2D("DPh2"+ID, "DPhi vs Calc P", 60, -3.14, 3.14, 60, 0, 0.8);
+    PmPc = new TH2D("PmPc"+ID, "P calc vs Edep", 40, 0, 0.8, 50, 0, 50000);
 }
 
 HistogramManager::~HistogramManager() {

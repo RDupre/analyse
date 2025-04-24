@@ -3,13 +3,10 @@
 #include <iostream>
 
 DataAnalyzer::DataAnalyzer(){
-    HistogramManager histManager0;
-    HistogramManager histManager1;
-    HistogramManager histManager2;
     // Initialize histogram managers
-    histManager0 = HistogramManager();
-    histManager1 = HistogramManager();
-    histManager2 = HistogramManager();
+    histManager0 = HistogramManager("_NoCut");
+    histManager1 = HistogramManager("_Elast");
+    histManager2 = HistogramManager("_OffEl");
     // Initialize run number
     RN = 0; 
 }
