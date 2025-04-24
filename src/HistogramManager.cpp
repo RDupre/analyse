@@ -8,20 +8,20 @@ HistogramManager::HistogramManager() {
     Pel = new TH1D("Pel", "Pel", 100, 0, 2.5);
     Tel = new TH1D("Tel", "Tel", 100, 0, 0.5);
     Hel = new TH1D("Hel", "Hel", 100, -3.14, 3.14);
-    Hq2 = new TH1D("q2", "q2", 100, 0, 1.0);
+    Hq2 = new TH1D("q2", "q2", 100, 0, 0.1);
     Hnu = new TH1D("nu", "nu", 100, 0, 2.3);
     HWp = new TH1D("Wp", "Wp", 100, 0.7, 1.5);
     HWh = new TH1D("Wh", "Wh", 100, 1.4, 2.5);
-    Hvz = new TH1D("Hvz", "Hvz", 100, -25, 25);
+    Hvz = new TH1D("Hvz", "Hvz", 100, -50, 50);
     Hep = new TH1D("Hep", "Hep", 100, 0, 1000);
     Hth = new TH1D("Hth", "Hth", 100, 0, 3.14);
     Hph = new TH1D("Hph", "Hph", 100, -3.14, 3.14);
     CPhi = new TH2D("DPhi", "DPhi", 60, -3.14, 3.14, 60, -3.14, 3.14);
     DelP = new TH1D("DelP", "Delta Phi", 60, -3.14, 3.14);
     Ppc = new TH1D("Ppc", "Ppc", 100, 0, 0.8);
-    Ecl = new TH1D("Ecl", "Ecl", 100, 0, 2.5);
+    Ecl = new TH1D("Ecl", "Ecl", 100, 0, 50000);
     DPPc = new TH2D("DPhi2", "DPhi vs Calc P", 60, -3.14, 3.14, 60, 0, 0.8);
-    PmPc = new TH2D("PmPc", "P meas vs calc", 60, 0, 600, 60, 0, 0.8);
+    PmPc = new TH2D("PmPc", "P calc vs Edep", 40, 0, 0.8, 50, 0, 50000);
 }
 
 HistogramManager::~HistogramManager() {
@@ -64,10 +64,7 @@ void HistogramManager::fillHistograms(double p, double theta, double phi, double
     Hel->Fill(phi);
     Ecl->Fill(edep);
     DPPc->Fill(dphi, ppr);
-    PmPc->Fill(ep, ppr);
-    if (dphi > 1.5 && dphi < 2.1) {
-        PmPc->Fill(ep, ppr);
-    }
+    PmPc->Fill(ppr,edep);
 }
 
 void HistogramManager::writeHistograms(const std::string& outputFile) {
