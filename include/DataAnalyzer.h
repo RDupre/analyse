@@ -6,7 +6,7 @@
 
 class DataAnalyzer {
 public:
-    DataAnalyzer(HistogramManager& histManager);
+    DataAnalyzer();
     ~DataAnalyzer();
     void analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::bank& ALEadc, hipo::bank& ALEhit);
     void writeHistograms(const std::string& outputFile);
@@ -15,8 +15,10 @@ public:
 
 private:
     int RN = 0;
-    HistogramManager& histManager;
+    HistogramManager& histManager0; // First histogram manager
+    HistogramManager& histManager1; // First histogram manager
+    HistogramManager& histManager2; // Second histogram manager
 };
 
-#endif // DATAANALYZER_H#include "DataAnalyzer.h"
+#endif // DATAANALYZER_H
 
