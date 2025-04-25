@@ -38,16 +38,20 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
         double Wh = sqrt(3.727 * 3.727 + 2 * 3.727 * nu - q2);
         if (Wp < 0.85 || Wp > 1.00) continue;
         double vz = RECpart.getFloat("vz", i);
-        double ppr = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
-                          RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
-                          (2.22 - RECpart.getFloat("pz", i)) * (2.22 - RECpart.getFloat("pz", i)));
+	if (vz < -16 || vz > 7) continue;
+        //double ppr = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
+        //                  RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
+        //                  (2.22 - RECpart.getFloat("pz", i)) * (2.22 - RECpart.getFloat("pz", i)));
+        double ppr = 2.22 * sin(theta);
 
         // Check tracks
         int TrkNb = ALEtrk.getRows();
         double chi2{1000000}, resi{0}, ep{0}, th{0}, ph{0}, dphi{0}, edep{0};
+	int TrackId{0};
         for (int j = 0; j < TrkNb; ++j) {
             if (ALEtrk.getFloat("chi2", j) < chi2) chi2 = ALEtrk.getFloat("chi2", j);
             else continue;
+	    TrackId = j + 1;
             resi = ALEtrk.getFloat("sum_residuals", j);
             ep = sqrt(ALEtrk.getFloat("px", j) * ALEtrk.getFloat("px", j) +
                       ALEtrk.getFloat("py", j) * ALEtrk.getFloat("py", j) +
@@ -60,6 +64,29 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             edep = (double)ALEtrk.getInt("sum_adc", j);
         }
 
+        // Process hits from AHDC::hits
+        int HitNb = ALEhit.getRows();
+	resi = 0;
+        for (int k = 0; k < HitNb; ++k) {
+            int HitId = ALEhit.getShort("id", k);
+            int layer = ALEhit.getInt("layer", k);
+            int superlayer = ALEhit.getInt("superlayer", k);
+            int wire = ALEhit.getInt("wire", k);
+            int track_id = ALEhit.getInt("trackid", k);
+            double time = ALEadc.getFloat("leadingEdgeTime", HitId-1);
+            int adc = ALEadc.getInt("ADC", HitId-1);
+
+	    if (track_id == TrackId) resi+=1;
+            // Print hit information
+//          std::cout << "Hit " << HitId << ": Layer = " << layer
+//                    << ", Superlayer = " << superlayer
+//                    << ", Wire = " << wire
+//                    << ", Track ID = " << track_id
+//                    << ", Time = " << time 
+//      	      << ", ADC = " << adc 
+//      	      << std::endl;
+        }
+
         if (dphi < -2.7 || dphi > 2.8) {
             // Fill Histograms
             histManager0.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep, chi2, resi);
@@ -68,63 +95,39 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             if (theta >= 0.09)
                 histManager2.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep, chi2, resi);
         //}
-
-        // Process hits from AHDC::hits
-        int HitNb = ALEhit.getRows();
-        for (int k = 0; k < HitNb; ++k) {
-            int HitId = ALEhit.getInt("id", k);
-            int layer = ALEhit.getInt("layer", k);
-            int superlayer = ALEhit.getInt("superlayer", k);
-            int wire = ALEhit.getInt("wire", k);
-            float doca = ALEhit.getFloat("doca", k);
-            double residual = ALEhit.getFloat("residual", k);
-            double residual_prefit = ALEhit.getFloat("residual_prefit", k);
-            int track_id = ALEhit.getInt("track_id", k);
-            double time = ALEhit.getFloat("time", k);
-
-            // Print hit information
-            std::cout << "Hit " << HitId << ": Layer = " << layer
-                      << ", Superlayer = " << superlayer
-                      << ", Wire = " << wire
-                      << ", DOCA = " << doca
-                      << ", Residual = " << residual
-                      << ", Residual Prefit = " << residual_prefit
-                      << ", Track ID = " << track_id
-                      << ", Time = " << time << std::endl;
-        }
-
+	
         // Process ADC signals from AHDC::adc
-        int AdcNb = ALEadc.getRows();
-        for (int l = 0; l < AdcNb; ++l) {
-            int adc_sector = ALEadc.getInt("sector", l);
-            int adc_layer = ALEadc.getInt("layer", l);
-            int adc_component = ALEadc.getInt("component", l);
-            int adc_order = ALEadc.getInt("order", l);
-            int adc_adc = ALEadc.getInt("ADC", l);
-            int adc_time = ALEadc.getInt("time", l);
-            int adc_ped = ALEadc.getInt("ped", l);
-            int adc_windex = ALEadc.getInt("windex", l);
-            int adc_integral = ALEadc.getInt("integral", l);
-            int adc_leadingEdgeTime = ALEadc.getInt("leadingEdgeTime", l);
-            int adc_timeOverThreshold = ALEadc.getInt("timeOverThreshold", l);
-            int adc_constantFractionTime = ALEadc.getInt("constantFractionTime", l);
+//      int AdcNb = ALEadc.getRows();
+//      for (int l = 0; l < AdcNb; ++l) {
+//          int adc_sector = ALEadc.getInt("sector", l);
+//          int adc_layer = ALEadc.getInt("layer", l);
+//          int adc_component = ALEadc.getInt("component", l);
+//          int adc_order = ALEadc.getInt("order", l);
+//          int adc_adc = ALEadc.getInt("ADC", l);
+//          int adc_time = ALEadc.getFloat("time", l);
+//          int adc_ped = ALEadc.getInt("ped", l);
+//          int adc_windex = ALEadc.getInt("windex", l);
+//          int adc_integral = ALEadc.getInt("integral", l);
+//          int adc_leadingEdgeTime = ALEadc.getFloat("leadingEdgeTime", l);
+//          int adc_timeOverThreshold = ALEadc.getFloat("timeOverThreshold", l);
+//          int adc_constantFractionTime = ALEadc.getFloat("constantFractionTime", l);
 
-            // Print ADC information
-            std::cout << "ADC Id" << l 
-                      << " sector = " << adc_sector
-                      << "layer = " << adc_layer
-                      << "component = " << adc_component
-                      << "order = " << adc_order
-                      << "ADC = " << adc_adc
-                      << "time = " << adc_time
-                      << "ped = " << adc_ped
-                      << "windex = " << adc_windex
-                      << "integral = " << adc_integral
-                      << "leadingEdgeTime = " << adc_leadingEdgeTime
-                      << "timeOverThreshold = " << adc_timeOverThreshold
-                      << "constantFractionTime = " << adc_constantFractionTime
-                      << std::endl;
-        }
+//          // Print ADC information
+//          std::cout << "ADC Id " << l 
+//                    << " sector = " << adc_sector
+//                    << " layer = " << adc_layer
+//                    << " component = " << adc_component
+//                    << " order = " << adc_order
+//                    << " ADC = " << adc_adc
+//                    << " time = " << adc_time
+//                    << " ped = " << adc_ped
+//                    << " windex = " << adc_windex
+//                    << " integral = " << adc_integral
+//                    << " leadingEdgeTime = " << adc_leadingEdgeTime
+//                    << " timeOverThreshold = " << adc_timeOverThreshold
+//                    << " constantFractionTime = " << adc_constantFractionTime
+//                    << std::endl;
+//      }
     }
     }
 }
