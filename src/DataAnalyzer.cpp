@@ -4,9 +4,9 @@
 
 DataAnalyzer::DataAnalyzer()
     // Initialize histogram managers
-    : histManager0("_All")
-    , histManager1("_FTe")
-    , histManager2("_FDe")
+    : histManager0("_Trk")
+    , histManager1("_Hi1")
+    , histManager2("_Hi2")
 {
     // Initialize run number
     RN = 0; 
@@ -38,7 +38,7 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
         double Wh = sqrt(3.727 * 3.727 + 2 * 3.727 * nu - q2);
         if (Wp < 0.85 || Wp > 1.00) continue;
         double vz = RECpart.getFloat("vz", i);
-	if (vz < -16 || vz > 7) continue;
+	    if (vz < -16 || vz > 7) continue;
         //double ppr = sqrt(RECpart.getFloat("px", i) * RECpart.getFloat("px", i) +
         //                  RECpart.getFloat("py", i) * RECpart.getFloat("py", i) +
         //                  (2.22 - RECpart.getFloat("pz", i)) * (2.22 - RECpart.getFloat("pz", i)));
@@ -47,7 +47,7 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
         // Check tracks
         int TrkNb = ALEtrk.getRows();
         double chi2{1000000}, resi{0}, ep{0}, th{0}, ph{0}, dphi{0}, edep{0};
-	int TrackId{0};
+        int TrackId{0}, NbHitsOnTrack{0};
         for (int j = 0; j < TrkNb; ++j) {
             if (ALEtrk.getFloat("chi2", j) < chi2) chi2 = ALEtrk.getFloat("chi2", j);
             else continue;
@@ -59,14 +59,15 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             th = acos(ALEtrk.getFloat("pz", j) / ep);
             ph = atan2(ALEtrk.getFloat("py", j), ALEtrk.getFloat("px", j));
             dphi = ph - phi;
-            if (dphi > 3.14) dphi -= 2 * 3.14;
-            if (dphi < -3.14) dphi += 2 * 3.14;
+            if (dphi > 3.14159) dphi -= 2 * 3.14159;
+            if (dphi < -3.14159) dphi += 2 * 3.14159;
             edep = (double)ALEtrk.getInt("sum_adc", j);
         }
 
         // Process hits from AHDC::hits
         int HitNb = ALEhit.getRows();
-	resi = 0;
+        int goodHit{0}, adcTot{0};
+        double phiTot{0};
         for (int k = 0; k < HitNb; ++k) {
             int HitId = ALEhit.getShort("id", k);
             int layer = ALEhit.getInt("layer", k);
@@ -76,66 +77,74 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             double time = ALEadc.getFloat("leadingEdgeTime", HitId-1);
             int adc = ALEadc.getInt("ADC", HitId-1);
 
-	    if (track_id == TrackId) resi+=1;
-            // Print hit information
-//          std::cout << "Hit " << HitId << ": Layer = " << layer
-//                    << ", Superlayer = " << superlayer
-//                    << ", Wire = " << wire
-//                    << ", Track ID = " << track_id
-//                    << ", Time = " << time 
-//      	      << ", ADC = " << adc 
-//      	      << std::endl;
+            // Count hits on the track
+            if (track_id == TrackId) NbHitsOnTrack+=1;
+
+            // Calculate the wire number
+            int WireNb = 0;
+            switch (superlayer)
+            {
+            case 1: // 1st superlayer
+                WireNb = 47;
+                break;
+            case 2: // 2nd superlayer
+                WireNb = 56;
+                break;
+            case 3: // 3rd superlayer
+                WireNb = 72;
+                break;
+            case 4: // 4th superlayer
+                WireNb = 87;
+                break;
+            case 5: // 5th superlayer
+                WireNb = 99;
+                break;            
+            default:
+                std::cerr << "Invalid superlayer: " << superlayer << std::endl;
+                continue;
+            }
+
+            // Calculate the wire phi position
+            double wirePhiIndex = wire + 0.5*(WiresNb%2) + 0.5*layer*(1-2*(numWires%2)); 
+            double wirePhi = wirePhiIndex * 2.0 * 3.14159 / WireNb;
+            wirePhi += 0.35*vz*pow(-1, superlayer);
+            if (wirePhi > 3.14159) wirePhi -= 2 * 3.14159;
+            if (wirePhi < -3.14159) wirePhi += 2 * 3.14159;
+
+            double wireDeltaPhi = wirePhi - phi;
+            if (wireDeltaPhi > 3.14159) wireDeltaPhi -= 2 * 3.14159;
+            if (wireDeltaPhi < -3.14159) wireDeltaPhi += 2 * 3.14159;
+
+            if(ADC > 150)
+                histManager1.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, 0, 0, wirePhi, wireDeltaPhi, ppr, adc, 0, 0);
+
+            if (wireDeltaPhi < -2.0 || wireDeltaPhi > 2.0) {
+                goodHit++;
+                adcTot += adc;
+                phiTot += wirePhi*adc;
+            }
+
         }
 
-        if (dphi < -2.7 || dphi > 2.8) {
-            // Fill Histograms
-            histManager0.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep, chi2, resi);
-            if (theta < 0.09)
-                histManager1.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep, chi2, resi);
-            if (theta >= 0.09)
-                histManager2.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep, chi2, resi);
-        //}
-	
-        // Process ADC signals from AHDC::adc
-//      int AdcNb = ALEadc.getRows();
-//      for (int l = 0; l < AdcNb; ++l) {
-//          int adc_sector = ALEadc.getInt("sector", l);
-//          int adc_layer = ALEadc.getInt("layer", l);
-//          int adc_component = ALEadc.getInt("component", l);
-//          int adc_order = ALEadc.getInt("order", l);
-//          int adc_adc = ALEadc.getInt("ADC", l);
-//          int adc_time = ALEadc.getFloat("time", l);
-//          int adc_ped = ALEadc.getInt("ped", l);
-//          int adc_windex = ALEadc.getInt("windex", l);
-//          int adc_integral = ALEadc.getInt("integral", l);
-//          int adc_leadingEdgeTime = ALEadc.getFloat("leadingEdgeTime", l);
-//          int adc_timeOverThreshold = ALEadc.getFloat("timeOverThreshold", l);
-//          int adc_constantFractionTime = ALEadc.getFloat("constantFractionTime", l);
+        // Calculate the average wire phi position
+        phiTot /= adcTot;
+        wireDeltaPhi = phiTot - phi;
+        if (wireDeltaPhi > 3.14159) wireDeltaPhi -= 2 * 3.14159;
+        if (wireDeltaPhi < -3.14159) wireDeltaPhi += 2 * 3.14159;
 
-//          // Print ADC information
-//          std::cout << "ADC Id " << l 
-//                    << " sector = " << adc_sector
-//                    << " layer = " << adc_layer
-//                    << " component = " << adc_component
-//                    << " order = " << adc_order
-//                    << " ADC = " << adc_adc
-//                    << " time = " << adc_time
-//                    << " ped = " << adc_ped
-//                    << " windex = " << adc_windex
-//                    << " integral = " << adc_integral
-//                    << " leadingEdgeTime = " << adc_leadingEdgeTime
-//                    << " timeOverThreshold = " << adc_timeOverThreshold
-//                    << " constantFractionTime = " << adc_constantFractionTime
-//                    << std::endl;
-//      }
-    }
+        // Fill Histograms
+        if (dphi < -2.0 || dphi > 2.0)
+            histManager0.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, ep, th, ph, dphi, ppr, edep, chi2, resi);
+        if(goodHit > 5) 
+            histManager2.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, 0, 0, phiTot, wireDeltaPhi, ppr, adcTot, 0, 0);
+
     }
 }
 
             void DataAnalyzer::writeHistograms(const std::string& outputFile) {
-    histManager0.writeHistograms(outputFile + "_All.root");
-    histManager1.writeHistograms(outputFile + "_FTe.root");
-    histManager2.writeHistograms(outputFile + "_FDe.root");
+    histManager0.writeHistograms(outputFile + "_Trk.root");
+    histManager1.writeHistograms(outputFile + "_Hi1.root");
+    histManager2.writeHistograms(outputFile + "_Hi2.root");
 }
 
 void DataAnalyzer::resetHistograms() {
