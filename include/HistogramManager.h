@@ -12,7 +12,8 @@ public:
     ~HistogramManager();
 
     void fillHistograms(double p, double theta, double phi, double q2, double nu, double Wp, double Wh,
-                        double vz, double ep, double th, double ph, double dphi, double ppr, double edep);
+                        double vz, double ep, double th, double ph, double dphi, double ppr, double edep,
+			double chi2, double resi);
     void writeHistograms(const std::string& outputFile);
     void resetHistograms();
 
@@ -35,6 +36,8 @@ private:
     TH1D* Ecl;
     TH2D* DPPc;
     TH2D* PmPc;
+    TH1D* HX2;
+    TH1D* ResH;
 };
 
 #endif // HISTOGRAMMANAGER_H
