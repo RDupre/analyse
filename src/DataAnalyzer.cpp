@@ -105,7 +105,7 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             }
 
             // Calculate the wire phi position
-            double wirePhiIndex = wire + 0.5*(WiresNb%2) + 0.5*layer*(1-2*(numWires%2)); 
+            double wirePhiIndex = wire + 0.5*(WireNb%2) + 0.5*layer*(1-2*(WireNb%2)); 
             double wirePhi = wirePhiIndex * 2.0 * 3.14159 / WireNb;
             wirePhi += 0.35*vz*pow(-1, superlayer);
             if (wirePhi > 3.14159) wirePhi -= 2 * 3.14159;
@@ -115,7 +115,7 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
             if (wireDeltaPhi > 3.14159) wireDeltaPhi -= 2 * 3.14159;
             if (wireDeltaPhi < -3.14159) wireDeltaPhi += 2 * 3.14159;
 
-            if(ADC > 150)
+            if(adc > 150)
                 histManager1.fillHistograms(p, theta, phi, q2, nu, Wp, Wh, vz, 0, 0, wirePhi, wireDeltaPhi, ppr, adc, 0, 0);
 
             if (wireDeltaPhi < -2.0 || wireDeltaPhi > 2.0) {
@@ -128,7 +128,7 @@ void DataAnalyzer::analyzeEvent(hipo::bank& RECpart, hipo::bank& ALEtrk, hipo::b
 
         // Calculate the average wire phi position
         phiTot /= adcTot;
-        wireDeltaPhi = phiTot - phi;
+        double wireDeltaPhi = phiTot - phi;
         if (wireDeltaPhi > 3.14159) wireDeltaPhi -= 2 * 3.14159;
         if (wireDeltaPhi < -3.14159) wireDeltaPhi += 2 * 3.14159;
 
